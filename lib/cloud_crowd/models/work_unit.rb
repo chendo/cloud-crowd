@@ -45,7 +45,11 @@ module CloudCrowd
         # of running at the moment.
         available_nodes   = NodeRecord.available
         available_actions = available_nodes.map {|node| node.actions }.flatten.uniq
-        filter            = "action in (#{available_actions.map{|a| "'#{a}'"}.join(',')})"
+        if available_notes.empty?
+          filter = "true"
+        else
+          filter = "action in (#{available_actions.map{|a| "'#{a}'"}.join(',')})"
+        end
 
         # Reserve a handful of available work units.
         WorkUnit.cancel_reservations(reservation) if reservation
