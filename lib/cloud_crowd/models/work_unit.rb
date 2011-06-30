@@ -45,7 +45,7 @@ module CloudCrowd
         # of running at the moment.
         available_nodes   = NodeRecord.available
         available_actions = available_nodes.map {|node| node.actions }.flatten.uniq
-        if available_notes.empty?
+        if available_nodes.empty?
           filter = "true"
         else
           filter = "action in (#{available_actions.map{|a| "'#{a}'"}.join(',')})"
