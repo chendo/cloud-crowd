@@ -166,7 +166,7 @@ module CloudCrowd
       @monitor_thread = Thread.new do
         loop do
           was_overloaded = @overloaded
-          @overloaded = overloaded?
+          @overloaded = overloaded? || (worker_count >= CloudCrowd[:max_workers])
           check_in if was_overloaded && !@overloaded
           sleep MONITOR_INTERVAL
         end
