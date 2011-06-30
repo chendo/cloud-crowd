@@ -24,8 +24,8 @@ module CloudCrowd
     # (if configured to do so in config.yml).
     MONITOR_INTERVAL    = 3
 
-    # The interval at which the node regularly checks in with central (5 min).
-    CHECK_IN_INTERVAL   = 300
+    # The interval at which the node regularly checks in with central (30 seconds).
+    CHECK_IN_INTERVAL   = 30
 
     # The response sent back when this node is overloaded.
     OVERLOADED_MESSAGE  = 'Node Overloaded'
