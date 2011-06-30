@@ -55,9 +55,10 @@ module CloudCrowd
     # Posts a WorkUnit to this Node. Forks a Worker and returns the process id.
     # Returns a 503 if this Node is overloaded.
     post '/work' do
-      throw :halt, [503, OVERLOADED_MESSAGE] if @overloaded
+      throw :halt, [503, OVERLOADED_MESSAGE] if @overloaded or @worker_count >= CloudCrowd.config[:max_workers]
       unit = JSON.parse(params[:work_unit])
       pid = fork { Worker.new(self, unit).run }
+      @worker_count += 1
       Process.detach(pid)
       json :pid => pid
     end
@@ -76,6 +77,7 @@ module CloudCrowd
       @overloaded       = false
       @max_load         = CloudCrowd.config[:max_load]
       @min_memory       = CloudCrowd.config[:min_free_memory]
+      @worker_count     = 0
       start unless test?
     end
 
@@ -129,6 +131,10 @@ module CloudCrowd
     def overloaded?
       (@max_load && load_average > @max_load) ||
       (@min_memory && free_memory < @min_memory)
+    end
+
+    def worker_count
+      @worker_count = `ps aux | grep cloud-crowd-worker | grep -v grep | wc -l`.strip.to_i
     end
 
     # The current one-minute load average.
